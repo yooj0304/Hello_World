@@ -1,0 +1,44 @@
+---
+title: "HomeworkThree_seungjoonyoo"
+author: "seungjoon yoo"
+date: "8/13/2020"
+output: html_document
+---
+This is my R markdown for assignment 3. 
+
+```{r, message = FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+In this assignment, I was asked to provide some visualizations of the congressional_hearings dataset. Import data using myData <-read_excel()
+
+```{r}
+myData <- read_excel("congressional_hearings.csv.xlsx")
+```
+
+Since the dataset includes numerous years, committees, sessions and days, the 'filter()' function is necessary to do some data transforming. In order to create a subset data based on a topic related to civil rights and minority issues which is categorized as 2 in the 'majortopic' column, I assigned 'civil' as below:
+
+```{r}
+civil <- filter(myData, `majortopic`==2)
+```
+
+In the majortopic==2, the number of sessions by each CIS year is visualized by ggplot. 
+
+```{r}
+ggplot(`civil`, aes(CISYear, Sessions)) + geom_point() + geom_smooth()
+```
+
+It seems that the number of sessions in the majortopic == 2 has gradually declined (at least visually..), but the years after 2019 need to be dropped. These can be done by below codes (this code was provided by professor Rice)
+
+```{r}
+civilByYear <- civil %>%
+  group_by(CISYear) %>%
+  summarise(numHearings = n())
+
+civilByYear <- filter(civilByYear, `CISYear` %in% c(1970:2017))
+```
+
+Alternatively, I tried to look at aes(CISyear, Sequences), but it looked really messy and there are some values that are hard to interpret. So, I chose one that provides a bit cleaner visualization.
+
+I wished to look at how active House committee, Senate committee and joint committee were in majortopic==2 by looking at either Days or Sessions column; however, I have a limited capability to divide these three columns in x-axis. I found this requires a function other than 'facet_wrap'
