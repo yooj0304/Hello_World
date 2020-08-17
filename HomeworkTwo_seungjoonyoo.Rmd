@@ -1,0 +1,29 @@
+---
+title: "HomeworkTwo_seungjoonyoo"
+author: "seungjoon yoo"
+date: "8/10/2020"
+output: html_document
+---
+
+This is my R Markdown document for HomeworkOne submitted last week. 
+
+```{r, include = FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+From the first assignment, I was asked to choose one of the three datasets and show the first few rows of data in the console. Out of three, I chose the *congressional_hearings* dataset. This time, I used **head ()** function instead of **print ()** as recommended in the previous comment.
+
+```{r}
+myData <- read_excel("congressional_hearings.csv.xlsx")
+myTibble <- as_tibble(myData)
+head (myTibble)
+```
+
+In order to check the number of observations and the number of variables, I used the codes below. It shows that there are **100,254 observations** and **36 variables** in the congressional_hearings dataset. Some of the variables include sequence, month, congress, year, comittee, and referral.
+
+```{r}
+dim(myTibble)
+colnames(myTibble)
+```
+
