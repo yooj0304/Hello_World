@@ -1,0 +1,84 @@
+---
+title: "Assignment 4"
+author: "seungjoon yoo"
+date: "8/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE )
+```
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readxl)
+```
+
+This is my R workdown for Assignment 4.
+
+First, import the congressional_hearings dataset.
+
+```{r}
+hearingData <- read_excel("/Users/seungjoonyoo/Desktop/DACSS601_Data Science Fundamentals/4. Datasets/congressional_hearings.csv.xlsx")
+```
+
+```{r}
+str(hearingData)
+```
+
+Create a subdata,"civil", which is categorized by the major topic == 2. Then, select
+"filter_House", "Sessions", "Days" and "Committee1" columns. Since the filter_House variable is a numeric value, I converted it into a factor using as.factor(). Same goes to Committee1 variable. Also delete the NAs using na.omit()
+
+```{r}
+civil <- hearingData %>%
+  filter(`majortopic` == 2) %>%
+  select(filter_House, Sessions, Days, Committee1 ) %>%
+  mutate(filter_House = as.factor(filter_House),
+         Committee1 = as.factor(Committee1)) %>%
+  na.omit()
+summary(civil)
+str(civil)
+```
+
+First, find the number of committees that house representatives created
+```{r}
+
+ggplot(civil, aes(x=filter_House))  + 
+  geom_bar()
+```
+
+In order to see how Sessions is distributed, I used geom_histogram()
+```{r}
+civil %>%
+  filter(Sessions > 0) %>%
+  ggplot(aes(x=Sessions)) +
+  geom_histogram(binwidth = 1)
+```
+
+I came with three hypotheses that 1. committees that are created by house representatives are more likely to have bigger sessions; 2. committees that are created by house representatives are more likely to have longer Days; 3.  While it may sound pretty intuitive, but for the practice purpose, I wanted to check whether more sessions will indeed take longer days. In order to visualize their relationships; I used geom_boxplot() for all three hypotheses.
+
+```{r}
+civil %>%
+  filter(Sessions > 0) %>%
+  ggplot(aes(x=filter_House, y=Sessions)) + 
+  geom_boxplot()
+
+civil %>%
+  filter(Sessions > 0) %>%
+  ggplot(aes(x=filter_House, y=Days)) + 
+  geom_boxplot()
+
+civil %>%
+  filter(Sessions > 0 ) %>%
+  ggplot(aes(x=Sessions, y =Days)) +
+  geom_jitter() +
+  geom_smooth()
+
+civil %>%
+  filter(Sessions > 0 ) %>%
+  ggplot(aes(x=Sessions, y =Days, col = filter_House)) +
+  geom_jitter() +
+  geom_smooth()
+```
+
+Unfortunately, all my hypotheses don't seem to be correct
